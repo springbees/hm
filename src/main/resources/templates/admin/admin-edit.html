@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html class="x-admin-sm" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>新增用户信息</title>
+    <header th:replace="common/header::html"></header>
+    <link rel="stylesheet" th:href="@{/my/css/from.css}"/>
+</head>
+
+<body>
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md6">
+            <form class="layui-form">
+                <input type="hidden" id="userId" name="id" th:value="${sysUser.id}">
+                <div class="layui-form-item">
+                    <label for="L_username" class="layui-form-label">
+                        <span class="x-red">*</span>用户名
+                    </label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="L_username" th:value="${sysUser.username}" name="username"
+                               lay-verify="required"
+                               autocomplete="off" class="layui-input">
+                    </div>
+                    <div class="layui-form-mid layui-word-aux">
+                        <span class="x-red">*</span>将会成为您唯一的登入名
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label for="L_nickname" class="layui-form-label">
+                        <span class="x-red">*</span>昵称
+                    </label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="L_nickname" th:value="${sysUser.nickname}" name="nickname" required=""
+                               lay-verify="nickname" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label for="L_headImgUrl" class="layui-form-label">
+                        <span class="x-red">*</span>头像上传
+                    </label>
+                    <div class="layui-input-inline">
+                        <div class="layui-upload-drag" id="L_headImgUrl">
+                            <i class="layui-icon"></i>
+                            <p>点击上传，或将文件拖拽到此处</p>
+                        </div>
+                    </div>
+                    <div class="layui-input-inline">
+                        <div id="uploadResult" class="layui-upload-list">
+                            <img class="layui-upload-img" width="110" height="110" lay-skin="nob" id="previewImg">
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label for="L_telephone" class="layui-form-label">
+                        <span class="x-red">*</span>手机
+                    </label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="L_telephone" th:value="${sysUser.telephone}" name="telephone" required=""
+                               lay-verify="telephone" autocomplete="off" class="layui-input">
+                    </div>
+                    <div class="layui-form-mid layui-word-aux">
+                        11位数字
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label for="L_email" class="layui-form-label">
+                        <span class="x-red">*</span>邮件
+                    </label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="L_email" th:value="${sysUser.email}" name="email" required=""
+                               lay-verify="email"
+                               autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label for="L_email" class="layui-form-label">生日</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="L_birthday" th:value="${#dates.format(sysUser.birthday, 'yyyy-MM-dd')}"
+                               name='birthday'
+                               placeholder="yyyy-MM-dd" class="layui-input ">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">性别</label>
+                    <div class="layui-input-block">
+                        <input type="radio" name="sex" id="sex" value="0" title="男">
+                        <input type="radio" name="sex" id="sex" value="1" title="女">
+                    </div>
+                </div>
+                <input type="text" id="roleId" name="roleId" style="display:none;"/>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">角色</label>
+                    <div class="layui-input-block show-role-container">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label for="L_email" class="layui-form-label">
+                    </label>
+                    <button class="layui-btn" lay-filter="add" lay-submit="">
+                        修改
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+
+    layui.use(['form', 'upload', 'layer', 'laydate'], function () {
+        $ = layui.jquery;
+        var form = layui.form
+            , layer = layui.layer
+            , laydate = layui.laydate, upload = layui.upload;
+
+        var userId = $("#userId").val();
+        //回显用户性别
+        $.ajax({
+            type: "post",
+            url: "/user/getUserSex",
+            data: {
+                "userId": userId
+            },
+            async: true,
+            dataType: "json",
+            success: function (result) {
+                console.log(result.data.sex)
+                $("input[name=sex][value=0]").attr("checked", result.data.sex == 0 ? true : false);
+                $("input[name=sex][value=1]").attr("checked", result.data.sex == 1 ? true : false);
+                form.render(); //更新全部
+            }
+        });
+
+
+        //拖拽文件上传
+        upload.render({
+            elem: '#L_headImgUrl'
+            , url: '/user/fileUpload/'
+            , done: function (res) {
+                layer.closeAll('loading');
+                if (res.code == 602) {
+                    layer.msg("上传成功！", {
+                        icon: 6
+                    });
+                } else {
+                    layer.msg("上传失败，请稍后重试！", {
+                        icon: 5
+                    });
+                }
+                var fileURL = res.data;
+                $("#uploadResult").append('<input readonly type="hidden" name="headImgUrl" value="' + fileURL + '" class="layui-input" />');
+                //预览图片
+                $('#previewImg').attr('src', fileURL); //图片链接（base64）
+            }, error: function (res) {
+                layer.closeAll('loading');
+                layer.msg('网络异常，请稍后重试！');
+            }
+        });
+
+        getAllRole(function () {
+            //重新渲染radio
+            layui.form.render('radio')
+        });
+        //监听提交
+        form.on('submit(add)', function (data) {
+            var rolelRadio = $("[name=roleId]:checked");
+            if (rolelRadio == undefined || rolelRadio.length <= 0) {
+                layer.alert("请给该用户设置角色");
+                return false;
+            }
+            data.field.roleId = rolelRadio.val();
+            $.ajax({
+                url: "/user/edit",
+                type: "POST",
+                data: data.field,
+                dataType: 'json',
+                success: function (result) {
+                    if (result.code == 500) {
+                        layer.alert(result.msg);
+                    } else {
+                        layer.alert("修改成功！", {icon: 6}, function () {
+                            //关闭当前frame
+                            xadmin.close();
+                            // 可以对父窗口进行刷新
+                            xadmin.father_reload();
+                        });
+                    }
+                }, error: function (result) {
+                    layer.msg("服务器异常！");
+                }
+            });
+            return false;
+        });
+
+
+        //日期
+        laydate.render({
+            elem: '#L_birthday'
+            , format: 'yyyy-MM-dd' //可任意组合
+        });
+
+        //自定义验证规则
+        form.verify({
+            nikename: function (value) {
+                if (value.length < 5) {
+                    return '昵称至少得5个字符啊';
+                }
+            }
+            , telephone: [/(.+){6,12}$/, '电话号码必须6到12位']
+        });
+
+    });
+
+    //异步加载角色类型
+    function getAllRole(callback) {
+        $.ajax({
+            url: "/role/all",
+            type: "POST",
+            dataType: 'json',
+            success: function (result) {
+                var html = "";
+                if (result.data && result.data.length > 0) {
+                    for (i in result.data) {
+                        html += '<input type="radio"  name="roleId" value="' + result.data[i].id + '" title="' + result.data[i].description + '" >' +
+                            '<div class="layui-unselect layui-form-radio layui-form-radioed"><i class="layui-anim layui-icon"></i><div>' + result.data[i].name + '</div></div>';
+                    }
+                    $(".show-role-container").html(html);
+                    //回调回显角色
+                    getCurrentUserRole(callback);
+                }
+            }
+        });
+    }
+
+
+    function getCurrentUserRole(callback) {
+        //获取用户ID用来查用用户所拥有的角色
+        var userId = $("#userId").val();
+        //异步发送Ajax请求
+        $.ajax({
+            type: 'POST',
+            url: '/roles_user/getRoleUserByUserId',
+            data: {
+                "userId": userId
+            },
+            dataType: 'json',
+            success: function (result) {
+                if (result.code == 200) {
+                    if (result.data) {
+                        //回显role
+                        $("[name=roleId]").each(function () {
+                            if ($(this).val() == result.data.roleId) {
+                                $(this).attr("checked", "checked");
+                                return false;
+                            }
+                        })
+                    }
+                    if (callback) {
+                        callback();
+                    }
+                }
+            }
+        });
+    }
+
+</script>
+</body>
+</html>

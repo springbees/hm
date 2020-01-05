@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jacklinsir.hm.dao.SysRoleUserDao">
+
+    <update id="updateSysRoleUser">
+        update sys_role_user t
+        <set>
+            <if test="roleId != null">
+                roleId = #{roleId},
+            </if>
+        </set>
+        where t.userId = #{userId}
+    </update>
+
+</mapper>

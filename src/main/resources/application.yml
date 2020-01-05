@@ -1,0 +1,12 @@
+spring:
+  profiles:
+    active: dev
+  devtools:
+    restart:
+      #需要实时更新的目录
+      additional-paths: resources/**,static/**,templates/**
+logging:
+  path: D://hm-log.log
+
+#配置公共api接口前缀
+api-url: /api

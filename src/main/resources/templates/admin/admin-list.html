@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html class="x-admin-sm" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>欢迎页面-HM</title>
+    <header th:replace="common/header::html"></header>
+</head>
+<body>
+<div class="x-nav">
+          <span class="layui-breadcrumb">
+            <a href="">首页</a>
+            <a href="">演示</a>
+            <a>
+              <cite>导航元素</cite></a>
+          </span>
+    <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right"
+       onclick="location.reload()" title="刷新">
+        <i class="layui-icon layui-icon-refresh" style="line-height:30px"></i></a>
+</div>
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body ">
+                    <form class="layui-form  layui-col-space5">
+                        <div class="layui-inline layui-show-xs-block">
+                            <input type="text" name="username" placeholder="请输入用户名" autocomplete="off"
+                                   class="layui-input">
+                        </div>
+                        <div class="layui-inline layui-show-xs-block">
+                            <button class="layui-btn" lay-submit="" lay-filter="search"><i
+                                    class="layui-icon">&#xe615;</i></button>
+                        </div>
+                    </form>
+                </div>
+                <div class="layui-card-header">
+                    <button class="layui-btn layui-btn-danger"><i class="layui-icon"></i>批量删除
+                    </button>
+                    <button class="layui-btn" onclick="xadmin.open('添加用户','/user/add')"><i class="layui-icon"></i>添加
+                    </button>
+                </div>
+
+
+                <div class="layui-card-body ">
+                    <table class="layui-hide" id="table" lay-filter="admin-user"></table>
+                </div>
+                <div class="layui-card-body">
+                    <script type="text/html" id="barDemo">
+                        <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+                        <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+                    </script>
+                    <script type="text/html" id="imgHead">
+                        <img src="{{d.headImgUrl}}" style="width: 30px;height: 30px"/>
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+<script>
+    layui.use('table', function () {
+        var $ = layui.$
+            , form = layui.form
+            , table = layui.table;
+
+        table.render({
+            elem: '#table'
+            , url: '/user/list' //数据接口
+            , page: true //开启分页
+            , id: 'testReload'
+            , method: 'post'
+            , toolbar: '#toolbarDemo'
+            , cols: [
+                [
+                    {type: 'checkbox', fixed: 'left'}
+                    , {field: 'id', title: 'ID', sort: true, width: 80}
+                    , {field: 'headImgUrl', title: '头像', templet: "#imgHead", align: "center"}
+                    , {field: 'username', title: '用户名', width: 80}
+                    , {field: 'nickname', title: '别名', width: 120}
+                    , {field: 'email', title: '邮箱', width: 120}
+                    , {field: 'telephone', title: '手机号', width: 120}
+                    , {field: 'createTime', title: '创建时间'}
+                    , {field: 'updateTime', title: '更新时间'}
+                    , {
+                    field: 'status', width: 80, title: '状态', templet: function (d) {
+                        return d.status == '1' ? "启动" : "禁用";
+                    }
+                }
+                    , {title: '操作', toolbar: '#barDemo'}
+                ]
+            ]
+        });
+
+
+        //头工具栏事件
+        table.on('toolbar(admin-user)',
+            function (obj) {
+                var checkStatus = table.checkStatus(obj.config.id);
+                switch (obj.event) {
+                    case 'getCheckData':
+                        var data = checkStatus.data;
+                        layer.alert(JSON.stringify(data));
+                        break;
+                    case 'getCheckLength':
+                        var data = checkStatus.data;
+                        layer.msg('选中了：' + data.length + ' 个');
+                        break;
+                    case 'isAll':
+                        layer.msg(checkStatus.isAll ? '全选' : '未全选');
+                        break;
+                }
+                ;
+            });
+
+        //监听工具条
+        table.on('tool(admin-user)', function (obj) {
+            var loadIndex = -1;
+            var data = obj.data;
+            if (obj.event == 'del') {
+                let confirm = layer.confirm('删除数据', function (index) {
+                    //执行Ajax进行删除
+                    $.ajax({
+                        url: '/user/delById'
+                        , type: 'GET'
+                        , data: {id: data.id}
+                        , dataType: 'json'
+                        , beforeSend: function () {
+                            loadIndex = layer.msg('处理中', {shift: 16});
+                        }, success: function (result) {
+                            layer.close(loadIndex);
+                            if (result.code == 200) {
+                                layer.alert("删除成功", {icon: 1}, function (index) {
+                                    layer.close(index);
+                                    xadmin.father_reload();
+                                })
+                            } else {
+                                layer.msg('删除失败！', {time: 1500, icon: 5, shift: 6});
+                            }
+                        }, error: function (result) {
+                            layer.msg("服务器异常！", {time: 1500, icon: 5, shift: 6});
+                        }
+                    });
+                });
+            } else if (obj.event === 'edit') {
+                xadmin.open('编辑用户信息', '/user/edit/?id=' + data.id);
+            }
+        });
+
+        //高级查询
+        form.on('submit(search)', function (data) {
+            var username = data.field.username;
+            table.render({
+                elem: '#table'
+                , url: '/user/findUserByFuzzyUserName' //数据接口
+                , page: true //开启分页
+                , id: 'testReload'
+                , method: 'post'
+                , toolbar: '#toolbarDemo'
+                , where: {
+                    "username": username
+                }
+                , cols: [
+                    [
+                        {type: 'checkbox', fixed: 'left'}
+                        , {field: 'id', title: 'ID', sort: true, width: 80}
+                        , {field: 'headImgUrl', title: '头像', templet: "#imgHead", align: "center"}
+                        , {field: 'username', title: '用户名', width: 80}
+                        , {field: 'nickname', title: '别名', width: 120}
+                        , {field: 'email', title: '邮箱', width: 120}
+                        , {field: 'telephone', title: '手机号', width: 120}
+                        , {field: 'createTime', title: '创建时间'}
+                        , {field: 'updateTime', title: '更新时间'}
+                        , {
+                        field: 'status', width: 80, title: '状态', templet: function (d) {
+                            return d.status == '1' ? "启动" : "禁用";
+                        }
+                    }
+                        , {title: '操作', toolbar: '#barDemo'}
+                    ]
+                ]
+            });
+            return false;
+        });
+
+    });
+
+</script>
+</html>
