@@ -1,0 +1,40 @@
+package com.jacklinsir.hm.controller;
+
+import com.jacklinsir.hm.common.result.CommonResults;
+import com.jacklinsir.hm.common.result.ResponseCode;
+import com.jacklinsir.hm.model.SysRoleUser;
+import com.jacklinsir.hm.service.SysRoleUserService;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+/**
+ * @author linSir
+ * @version V1.0
+ * @Description: (用户角色控制器)
+ * @Date 2020/1/4 16:08
+ */
+@Slf4j
+@Controller
+@RequestMapping("roles_user")
+public class SysRoleUserController {
+
+    @Autowired
+    private SysRoleUserService roleUserService;
+
+    @ResponseBody
+    @PostMapping("/getRoleUserByUserId")
+    public CommonResults getRoleUser(@RequestParam("userId") Integer userId) {
+        try {
+            SysRoleUser user = roleUserService.getRoleUserByUserId(userId);
+            return CommonResults.success(ResponseCode.SUCCESS, user);
+        } catch (Exception e) {
+            log.error("根据用户ID查询角色出异常了: {}", e.fillInStackTrace());
+            return CommonResults.success(e.getMessage());
+        }
+    }
+}
