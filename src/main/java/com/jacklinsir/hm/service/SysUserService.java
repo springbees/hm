@@ -3,6 +3,7 @@ package com.jacklinsir.hm.service;
 import com.jacklinsir.hm.dto.UserDto;
 import com.jacklinsir.hm.model.SysUser;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -44,7 +45,7 @@ public interface SysUserService {
      * @param id
      * @return
      */
-    Integer delById(Integer id);
+    Integer delById(Integer id) throws IOException;
 
     /**
      * 保存用户

@@ -80,7 +80,7 @@ public class CommonResults<T> implements Serializable {
         return new CommonResults<T>(ResponseCode.SUCCESS.getCode(), msg);
     }
 
-    public static <T> CommonResults<T> success(ResponseCode resultCode,T data) {
+    public static <T> CommonResults<T> success(ResponseCode resultCode, T data) {
         return new CommonResults<T>(resultCode.getCode(), data);
     }
 
@@ -93,6 +93,10 @@ public class CommonResults<T> implements Serializable {
      */
     public static <T> CommonResults<T> success(ResponseCode resultCode) {
         return new CommonResults<T>(resultCode.getCode(), resultCode.getMessage());
+    }
+
+    public static <T> CommonResults<T> success(T data) {
+        return new CommonResults<T>(ResponseCode.SUCCESS.getCode(), data);
     }
 
 

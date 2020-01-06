@@ -1,5 +1,6 @@
 package com.jacklinsir.hm.service;
 
+import com.jacklinsir.hm.dto.RoleDto;
 import com.jacklinsir.hm.model.SysRole;
 
 import java.util.List;
@@ -17,4 +18,16 @@ public interface SysRoleService {
      * @return
      */
     List<SysRole> roleAll();
+
+    List<SysRole> roleList(Integer page, Integer limit);
+
+    List<SysRole> findRoleByFuzzyRoleName(Integer page, Integer limit, String roleName);
+
+    int save(RoleDto dto);
+
+    int delById(Integer id);
+
+    SysRole getByRoleId(Integer id);
+
+    int updateRole(RoleDto dto);
 }

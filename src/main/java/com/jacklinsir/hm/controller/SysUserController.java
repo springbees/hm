@@ -6,6 +6,7 @@ import com.jacklinsir.hm.common.result.CommonPage;
 import com.jacklinsir.hm.common.result.CommonResults;
 import com.jacklinsir.hm.common.result.ResponseCode;
 import com.jacklinsir.hm.common.utils.FileUtils;
+import com.jacklinsir.hm.common.utils.WebFileUtils;
 import com.jacklinsir.hm.dto.UserDto;
 import com.jacklinsir.hm.model.SysUser;
 import com.jacklinsir.hm.service.SysUserService;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.util.WebUtils;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -56,7 +58,8 @@ public class SysUserController {
 
     @PostMapping("/list")
     @ResponseBody
-    public CommonResults list(@RequestParam(value = "page", defaultValue = "1") Integer page, @RequestParam(value = "limit", defaultValue = "10") Integer limit) {
+    public CommonResults list(@RequestParam(value = "page", defaultValue = "1") Integer page,
+                              @RequestParam(value = "limit", defaultValue = "10") Integer limit) {
         List<SysUser> list = userService.queryAll(page, limit);
         //进行统一分页
         CommonPage commonPage = CommonPage.restPage(list);
@@ -98,7 +101,7 @@ public class SysUserController {
             return userService.save(dto, roleId) == 1 ? CommonResults.success(ResponseCode.SUCCESS) : CommonResults.failure(ResponseCode.FAIL);
         } catch (Exception e) {
             log.info("添加用户出现异常了: {}", e.fillInStackTrace());
-            disFile(dto);
+            WebFileUtils.disFile(dto.getHeadImgUrl());
             //返回异常信息结果
             return CommonResults.failure(ResponseCode.FAIL.getCode(), e.getMessage());
         }
@@ -113,13 +116,14 @@ public class SysUserController {
                 SysUser userById = userService.getUserById(dto.getId());
                 //处理旧文件,查询如果旧文件存在者删除，不存在继续往下执行
                 if (StrUtil.isNotBlank(userById.getHeadImgUrl())) {
-                    disFile(dto);
+                    WebFileUtils.disFile(dto.getHeadImgUrl());
                 }
             }
             //修改用户
             return userService.edit(dto, roleId) == 1 ? CommonResults.success(ResponseCode.SUCCESS) : CommonResults.failure(ResponseCode.FAIL);
         } catch (Exception e) {
-            disFile(dto);
+            //处理失败的文件进行上传
+            WebFileUtils.disFile(dto.getHeadImgUrl());
             log.info("修改用户出现异常了: {}", e.fillInStackTrace());
             return CommonResults.failure(FAIL.getCode(), e.getMessage());
         }
@@ -139,33 +143,6 @@ public class SysUserController {
             log.info("高级查询-发生异常: {}",e.fillInStackTrace());
             return CommonResults.failure(FAIL.getCode(),e.getMessage());
         }
-    }
-
-    /**
-     * 处理用户修改添加失败文件删除，防止浪费空间
-     *
-     * @param dto
-     * @throws IOException
-     */
-    private void disFile(UserDto dto) throws IOException {
-        //将添加失败用户的文件进行删除
-        String[] split = dto.getHeadImgUrl().split("/");
-        StringBuilder builder = new StringBuilder();
-        for (int i = 0; i < split.length; i++) {
-            if (i == split.length - 1) {
-                builder.append(split[i]);
-            } else {
-                if (i > 3) {
-                    builder.append(split[i] + "\\");
-                }
-            }
-        }
-        //获取文件存储路径
-        Properties properties = new Properties();
-        properties.load(ClassUtils.getDefaultClassLoader().getResourceAsStream("file.properties"));
-        String targetURL = properties.getProperty("fileParent") + "\\" + properties.getProperty("FileProject") + "\\" + builder.toString();
-        log.info("保存用户信息发生异常-文件输出目录:{}", targetURL);
-        FileUtils.deleteFile(targetURL);
     }
 
 

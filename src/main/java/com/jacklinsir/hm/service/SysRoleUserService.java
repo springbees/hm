@@ -2,6 +2,8 @@ package com.jacklinsir.hm.service;
 
 import com.jacklinsir.hm.model.SysRoleUser;
 
+import java.util.List;
+
 /**
  * @author linSir
  * @version V1.0
@@ -16,4 +18,12 @@ public interface SysRoleUserService {
      * @return
      */
     SysRoleUser getRoleUserByUserId(Integer userId);
+
+    /**
+     * 根据角色ID查询用户
+     *
+     * @param roleId
+     * @return
+     */
+    List<SysRoleUser> listAllSysRoleUserByRoleId(Integer roleId);
 }

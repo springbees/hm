@@ -6,6 +6,7 @@ import com.github.pagehelper.PageHelper;
 import com.jacklinsir.hm.common.result.CommonResults;
 import com.jacklinsir.hm.common.result.ResponseCode;
 import com.jacklinsir.hm.common.utils.MD5;
+import com.jacklinsir.hm.common.utils.WebFileUtils;
 import com.jacklinsir.hm.dao.SysRoleUserDao;
 import com.jacklinsir.hm.dao.SysUserDao;
 import com.jacklinsir.hm.dto.UserDto;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -131,13 +133,19 @@ public class SysUserServiceImpl implements SysUserService {
     }
 
     @Override
-    public Integer delById(Integer id) {
+    public Integer delById(Integer id) throws IOException {
         if (id > 0 && ObjectUtil.isNotNull(id)) {
             log.info("删除用户ID：{}", id);
             //删除用户之前把当前用户的角色关联表进行删除
             int delRoleUser = roleUserDao.delRoleUser(id);
+            //根据ID查询出对象
+            SysUser userById = userDao.getUserById(id);
             if (delRoleUser >= 0) {
-                return userDao.delById(id);
+                if (userDao.delById(id) > 0) {
+                    //将头像文件进行删除，防止占用空间
+                    WebFileUtils.disFile(userById.getHeadImgUrl());
+                    return 1;
+                }
             }
         }
         return 0;
@@ -155,7 +163,8 @@ public class SysUserServiceImpl implements SysUserService {
     public List<SysUser> findUserByFuzzyUserName(Integer page, Integer limit, String username) {
         if (!StrUtil.isNotBlank(username)) {
             throw new RuntimeException("查询参数异常");
-        }PageHelper.startPage(page, limit);
+        }
+        PageHelper.startPage(page, limit);
         List<SysUser> data = userDao.findUserByFuzzyUserName(username);
         log.info("用户列表数据：{}", data);
         return data;

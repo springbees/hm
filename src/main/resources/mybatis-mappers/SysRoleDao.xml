@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jacklinsir.hm.dao.SysRoleDao">
+
+    <insert id="saveRole" parameterType="com.jacklinsir.hm.model.SysRole" flushCache="true" useGeneratedKeys="true"
+            keyProperty="id">
+		insert into sys_role(name, description, createTime, updateTime)
+		values
+		(#{name}, #{description}, now(), now())
+	</insert>
+
+
+    <select id="findRoleByFuzzyRoleName" resultType="com.jacklinsir.hm.model.SysRole">
+        select *from sys_role
+        <where>
+            <if test="roleName!=null and roleName!='' ">
+                name LIKE CONCAT('%',#{roleName},'%')
+            </if>
+        </where>
+    </select>
+    <update id="update">
+        update sys_role t
+        <set>
+            <if test="name != null">
+                `name` = #{name},
+            </if>
+            <if test="description != null">
+                description = #{description},
+            </if>
+
+            updateTime = #{updateTime}
+        </set>
+        where t.id = #{id}
+    </update>
+</mapper>

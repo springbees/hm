@@ -5,6 +5,8 @@ import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Select;
 
+import java.util.List;
+
 /**
  * @author linSir
  * @version V1.0
@@ -21,10 +23,13 @@ public interface SysRoleUserDao {
     SysRoleUser getRoleUserByUserId(Integer userId);
 
     @Select("select * from sys_role_user t where t.userId = #{userId}")
-    SysRoleUser getSysRoleUserByUserId(int intValue);
+    SysRoleUser getSysRoleUserByUserId(int userId);
 
     int updateSysRoleUser(SysRoleUser sysRoleUser);
 
-    @Delete("delete from sys_role_user t where t.userId=#{id} ")
+    @Delete("delete from sys_role_user where userId=#{id} ")
     int delRoleUser(Integer id);
+
+    @Select("select * from sys_role_user t where t.userId = #{roleId}")
+    List<SysRoleUser> listAllSysRoleUserByRoleId(Integer roleId);
 }

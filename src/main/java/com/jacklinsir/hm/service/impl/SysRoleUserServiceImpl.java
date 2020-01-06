@@ -6,6 +6,8 @@ import com.jacklinsir.hm.service.SysRoleUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * @author linSir
  * @version V1.0
@@ -17,6 +19,11 @@ public class SysRoleUserServiceImpl implements SysRoleUserService {
 
     @Autowired
     private SysRoleUserDao roleUserDao;
+
+    @Override
+    public List<SysRoleUser> listAllSysRoleUserByRoleId(Integer roleId) {
+        return roleUserDao.listAllSysRoleUserByRoleId(roleId);
+    }
 
     @Override
     public SysRoleUser getRoleUserByUserId(Integer userId) {

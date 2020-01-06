@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html class="x-admin-sm" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>新增角色信息</title>
+    <header th:replace="common/header::html"></header>
+    <link rel="stylesheet" th:href="@{/ztree/zTreeStyle/zTreeStyle.css}"/>
+    <link rel="stylesheet" th:href="@{/ztree/demo.css}"/>
+</head>
+
+<body>
+<div class="x-body">
+    <form class="layui-form">
+
+        <div class="layui-form-item">
+            <label for="L_name" class="layui-form-label">
+                <span class="x-red">*</span>角色名
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="L_name" th:value="${sysRole.name}" name="name" required="" lay-verify="name"
+                       autocomplete="off" class="layui-input">
+            </div>
+            <div class="layui-form-mid layui-word-aux">
+                <span class="x-red">*</span>将会成为角色名
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="L_description" class="layui-form-label">
+                <span class="x-red">*</span>描述
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="L_description" th:value="${sysRole.description}" name="description" required=""
+                       lay-verify="description" autocomplete="off" class="layui-input">
+            </div>
+            <div class="layui-form-mid layui-word-aux">
+                该角色的定位或权限范围
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="col-md-2 control-label layui-form-label">权限</label>
+            <div class="col-md-10">
+                <ul id="treeDemo" class="ztree"></ul>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <button style="margin-left: 280px" class="layui-btn" lay-filter="add" lay-submit="">
+                增加
+            </button>
+        </div>
+    </form>
+</div>
+<script>
+    layui.use(['form', 'layer', 'laydate'], function () {
+        $ = layui.jquery;
+        var form = layui.form
+            , layer = layui.layer
+            , laydate = layui.laydate;
+
+        //日期
+        laydate.render({
+            elem: '#L_birthday'
+            , format: 'yyyy-MM-dd' //可任意组合
+        });
+
+        //自定义验证规则
+        form.verify({
+            name: function (value) {
+                if (value.length < 4) {
+                    return '角色名至少4个字符';
+                }
+            }
+        });
+
+        //监听提交
+        form.on('submit(add)', function (data) {
+            console.log(data);
+            var permissionIds = getCheckedMenuIds();
+            data.field.permissionIds = permissionIds;
+            $.ajax({
+                url: "/role/add",
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(data.field),
+                dataType: 'json',
+                success: function (result) {
+                    if (result.code == 200) {
+                        layer.alert("添加成功", {icon: 6}, function () {
+                            //关闭当前frame
+                            xadmin.close();
+                            // 可以对父窗口进行刷新
+                            xadmin.father_reload();
+                        });
+                    } else {
+                        layer.alert(result.msg, {icon: 5, shift: 6});
+                    }
+                },
+                error: function (result) {
+                    layer.alert(result.msg, {icon: 5, shift: 6});
+                }
+            });
+            return false;
+        });
+    });
+    $.fn.zTree.init($("#treeDemo"), getSettting(), getMenuTree());
+
+</script>
+</body>
+</html>
