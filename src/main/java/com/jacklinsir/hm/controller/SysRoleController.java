@@ -8,11 +8,11 @@ import com.jacklinsir.hm.model.SysRole;
 import com.jacklinsir.hm.service.SysRoleService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -30,6 +30,7 @@ public class SysRoleController {
 
     @ResponseBody
     @PostMapping("/all")
+    @PreAuthorize("hasAuthority('sys:role:query')")
     public CommonResults list() {
         if (roleService.roleAll().isEmpty()) {
             return CommonResults.failure();
@@ -39,6 +40,7 @@ public class SysRoleController {
 
     @ResponseBody
     @PostMapping("/list")
+    @PreAuthorize("hasAuthority('sys:role:query')")
     public CommonResults list(@RequestParam(value = "page", defaultValue = "1") Integer page,
                               @RequestParam(value = "limit", defaultValue = "10") Integer limit) {
 
@@ -69,6 +71,7 @@ public class SysRoleController {
 
     @ResponseBody
     @PostMapping("/edit")
+    @PreAuthorize("hasAuthority('sys:role:edit')")
     public CommonResults edit(@RequestBody RoleDto dto) {
         try {
             int update = roleService.updateRole(dto);
@@ -83,6 +86,7 @@ public class SysRoleController {
     }
 
     @GetMapping("/edit")
+    @PreAuthorize("hasAuthority('sys:role:edit')")
     public String edit(@RequestParam("id") Integer id, ModelMap modelMap) {
         SysRole role = roleService.getByRoleId(id);
         modelMap.addAttribute("sysRole", role);
@@ -91,6 +95,7 @@ public class SysRoleController {
 
     @ResponseBody
     @GetMapping("/delete")
+    @PreAuthorize("hasAuthority('sys:role:delete')")
     public CommonResults delById(@RequestParam("id") Integer id) {
         try {
             int del = roleService.delById(id);
@@ -106,6 +111,7 @@ public class SysRoleController {
 
     @ResponseBody
     @PostMapping("/add")
+    @PreAuthorize("hasAuthority('sys:role:add')")
     public CommonResults add(@RequestBody RoleDto dto) {
         log.info("角色添加请求参数: {}", dto);
         try {
@@ -123,6 +129,7 @@ public class SysRoleController {
      * @return
      */
     @GetMapping("/add")
+    @PreAuthorize("hasAuthority('sys:role:add')")
     public String add(ModelMap modelMap) {
         modelMap.addAttribute("sysRole", new SysRole());
         return "role/role-add";

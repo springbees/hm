@@ -13,20 +13,18 @@ import com.jacklinsir.hm.service.SysUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.util.ClassUtils;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.util.WebUtils;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.Properties;
 
 import static com.jacklinsir.hm.common.result.ResponseCode.FAIL;
 
@@ -58,6 +56,7 @@ public class SysUserController {
 
     @PostMapping("/list")
     @ResponseBody
+    @PreAuthorize("hasAuthority('sys:user:query')")
     public CommonResults list(@RequestParam(value = "page", defaultValue = "1") Integer page,
                               @RequestParam(value = "limit", defaultValue = "10") Integer limit) {
         List<SysUser> list = userService.queryAll(page, limit);
@@ -68,6 +67,7 @@ public class SysUserController {
 
     @GetMapping("/delById")
     @ResponseBody
+    @PreAuthorize("hasAuthority('sys:user:del')")
     public CommonResults delById(@RequestParam(value = "id", defaultValue = "0") Integer id) {
         try {
             Integer index = userService.delById(id);
@@ -95,6 +95,7 @@ public class SysUserController {
 
     @PostMapping("/add")
     @ResponseBody
+    @PreAuthorize("hasAuthority('sys:user:add')")
     public CommonResults add(UserDto dto, @RequestParam(value = "roleId") Integer roleId) throws IOException {
         log.info("添加请求参数：{}", dto);
         try {
@@ -109,6 +110,7 @@ public class SysUserController {
 
     @ResponseBody
     @PostMapping("/edit")
+    @PreAuthorize("hasAuthority('sys:user:edit')")
     public CommonResults edit(UserDto dto, @RequestParam(value = "roleId") Integer roleId) throws IOException {
         log.info("用户请求参数:{}  角色ID: {}", dto, roleId);
         try {
@@ -154,6 +156,7 @@ public class SysUserController {
      * @return
      */
     @GetMapping("/edit")
+    @PreAuthorize("hasAuthority('sys:user:edit')")
     public String edit(ModelMap modelMap, SysUser user) {
         modelMap.addAttribute("sysUser", userService.getByUserId(user.getId()));
 
@@ -191,6 +194,7 @@ public class SysUserController {
      * @return
      */
     @GetMapping("/add")
+    @PreAuthorize("hasAuthority('sys:user:add')")
     public String addView(ModelMap modelMap) {
         modelMap.addAttribute("sysUser", new SysUser());
         return "admin/admin-add";

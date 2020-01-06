@@ -3,21 +3,17 @@ package com.jacklinsir.hm.service.impl;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.github.pagehelper.PageHelper;
-import com.jacklinsir.hm.common.result.CommonResults;
 import com.jacklinsir.hm.common.result.ResponseCode;
-import com.jacklinsir.hm.common.utils.MD5;
 import com.jacklinsir.hm.common.utils.WebFileUtils;
 import com.jacklinsir.hm.dao.SysRoleUserDao;
 import com.jacklinsir.hm.dao.SysUserDao;
-import com.jacklinsir.hm.dto.UserDto;
 import com.jacklinsir.hm.model.SysRoleUser;
 import com.jacklinsir.hm.model.SysUser;
 import com.jacklinsir.hm.service.SysUserService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.ibatis.annotations.Results;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
@@ -116,7 +112,9 @@ public class SysUserServiceImpl implements SysUserService {
         //设置用户默认状态
         user.setStatus(1);
         //设置密码加密
-        user.setPassword(MD5.crypt(user.getPassword()));
+        //user.setPassword(MD5.crypt(user.getPassword()));
+        //使用Spring Security提供的密码加密器
+        user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
         //保存用户开始
         if (roleId != null && roleId != 0) {
             int userSave = userDao.save(user);
