@@ -4,6 +4,8 @@ import com.jacklinsir.hm.common.result.CommonResults;
 import com.jacklinsir.hm.common.result.ResponseCode;
 import com.jacklinsir.hm.model.SysRoleUser;
 import com.jacklinsir.hm.service.SysRoleUserService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -21,11 +23,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Slf4j
 @Controller
 @RequestMapping("roles_user")
+@Api(tags = "SysRoleUserController", description = "角色与用户关联")
 public class SysRoleUserController {
 
     @Autowired
     private SysRoleUserService roleUserService;
 
+    @ApiOperation("根据用户ID查询用户角色关联表数据")
     @ResponseBody
     @PostMapping("/getRoleUserByUserId")
     public CommonResults getRoleUser(@RequestParam("userId") Integer userId) {

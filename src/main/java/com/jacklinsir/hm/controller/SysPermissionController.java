@@ -5,6 +5,8 @@ import com.jacklinsir.hm.common.result.CommonResults;
 import com.jacklinsir.hm.common.result.ResponseCode;
 import com.jacklinsir.hm.model.SysPermission;
 import com.jacklinsir.hm.service.SysPermissionService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -20,6 +22,7 @@ import java.util.List;
  * @Description: (权限控制器)
  * @Date 2020/1/5 16:24
  */
+@Api(tags = "SysPermissionController", description = "权限资源管理")
 @Slf4j
 @Controller()
 @RequestMapping("permission")
@@ -33,6 +36,7 @@ public class SysPermissionController {
      *
      * @return
      */
+    @ApiOperation("获取权限列表")
     @ResponseBody
     @GetMapping("listAllPermission")
     public CommonResults<JSONArray> listAllPermission() {
@@ -40,6 +44,7 @@ public class SysPermissionController {
     }
 
 
+    @ApiOperation("获取权限角色关联表列表")
     @ResponseBody
     @GetMapping("/listAllPermissionByRoleId")
     public CommonResults listAllPermissionByRoleId(@RequestParam("id") Integer id) {
@@ -47,6 +52,7 @@ public class SysPermissionController {
         return permissionService.listAllPermissionByRoleId(id);
     }
 
+    @ApiOperation("获取菜单列表")
     @ResponseBody
     @GetMapping("/menuAll")
     @PreAuthorize("hasAuthority('sys:menu:query')")
@@ -55,6 +61,7 @@ public class SysPermissionController {
         return CommonResults.success(ResponseCode.SUCCESS, datas.size(), datas);
     }
 
+    @ApiOperation("添加权限页面")
     @RequestMapping("/add")
     @PreAuthorize("hasAuthority('sys:menu:add')")
     public String add(ModelMap modelMap) {
@@ -62,6 +69,7 @@ public class SysPermissionController {
         return "permission/permission-add";
     }
 
+    @ApiOperation("权限添加")
     @ResponseBody
     @PostMapping("/add")
     @PreAuthorize("hasAuthority('sys:menu:add')")
@@ -87,6 +95,7 @@ public class SysPermissionController {
      * @param id
      * @return
      */
+    @ApiOperation("编辑权限页面")
     @RequestMapping("/edit")
     @PreAuthorize("hasAuthority('sys:menu:edit')")
     public String edit(ModelMap modelMap, @RequestParam("id") Integer id) {
@@ -94,6 +103,7 @@ public class SysPermissionController {
         return "permission/permission-add";
     }
 
+    @ApiOperation("更新权限")
     @ResponseBody
     @PostMapping("/edit")
     @PreAuthorize("hasAuthority('sys:menu:edit')")
@@ -113,6 +123,7 @@ public class SysPermissionController {
     }
 
 
+    @ApiOperation("删除权限")
     @ResponseBody
     @GetMapping("/delete")
     @PreAuthorize("hasAuthority('sys:menu:del')")
@@ -129,6 +140,7 @@ public class SysPermissionController {
         }
     }
 
+    @ApiOperation("根据用户ID查询权限菜单")
     @ResponseBody
     @GetMapping("/menu")
     public CommonResults<SysPermission> getMenu(@RequestParam("userId") Integer userId) {

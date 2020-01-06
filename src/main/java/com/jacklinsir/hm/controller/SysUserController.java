@@ -10,6 +10,10 @@ import com.jacklinsir.hm.common.utils.WebFileUtils;
 import com.jacklinsir.hm.dto.UserDto;
 import com.jacklinsir.hm.model.SysUser;
 import com.jacklinsir.hm.service.SysUserService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
@@ -34,6 +38,7 @@ import static com.jacklinsir.hm.common.result.ResponseCode.FAIL;
  * @Description: (用户Controller)
  * @Date 2019/12/31 14:04
  */
+@Api(tags = "SysUserController", description = "用户管理")
 @Slf4j
 @Controller
 @RequestMapping("user")
@@ -48,12 +53,17 @@ public class SysUserController {
      * @param username
      * @return
      */
+    @ApiOperation("根据用户名查询")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "username", required = true)
+    })
     @GetMapping("/get/{username}")
     @ResponseBody
     public Object getUsername(@PathVariable String username) {
         return userService.getUser(username);
     }
 
+    @ApiOperation("查询用户列表")
     @PostMapping("/list")
     @ResponseBody
     @PreAuthorize("hasAuthority('sys:user:query')")
@@ -65,6 +75,10 @@ public class SysUserController {
         return CommonResults.success(commonPage.getTotal().intValue(), commonPage.getList());
     }
 
+    @ApiOperation("用户删除")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", required = true),
+    })
     @GetMapping("/delById")
     @ResponseBody
     @PreAuthorize("hasAuthority('sys:user:del')")
@@ -82,6 +96,7 @@ public class SysUserController {
     }
 
 
+    @ApiOperation("文件上传")
     @ResponseBody
     @PostMapping("/fileUpload")
     public CommonResults fileUpload(MultipartFile file) {
@@ -93,6 +108,7 @@ public class SysUserController {
 
     }
 
+    @ApiOperation("用户添加")
     @PostMapping("/add")
     @ResponseBody
     @PreAuthorize("hasAuthority('sys:user:add')")
@@ -108,6 +124,7 @@ public class SysUserController {
         }
     }
 
+    @ApiOperation("用户更新")
     @ResponseBody
     @PostMapping("/edit")
     @PreAuthorize("hasAuthority('sys:user:edit')")
@@ -131,8 +148,22 @@ public class SysUserController {
         }
     }
 
+    /**
+     * @param username
+     * @param page
+     * @param limit
+     * @return
+     * @ApiOperation(value = "模糊查询用户信息", notes = "模糊搜索查询用户信息")//描述
+     * @ApiImplicitParams({
+     * @ApiImplicitParam(name = "username",value = "模糊搜索的用户名", required = true),
+     * })
+     */
     @ResponseBody
     @PostMapping("/findUserByFuzzyUserName")
+    @ApiOperation(value = "模糊查询用户信息", notes = "模糊搜索查询用户信息")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "username", value = "模糊搜索的用户名", required = true),
+    })
     public CommonResults findUserByFuzzyUserName(@RequestParam("username") String username,
                                                  @RequestParam(value = "page", defaultValue = "1") Integer page,
                                                  @RequestParam(value = "limit", defaultValue = "10") Integer limit) {
@@ -155,6 +186,7 @@ public class SysUserController {
      * @param user
      * @return
      */
+    @ApiOperation("用户编辑页面")
     @GetMapping("/edit")
     @PreAuthorize("hasAuthority('sys:user:edit')")
     public String edit(ModelMap modelMap, SysUser user) {
@@ -164,6 +196,10 @@ public class SysUserController {
     }
 
 
+    @ApiOperation("根据用户性别查询")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "userId", required = true),
+    })
     @ResponseBody
     @RequestMapping("/getUserSex")
     public CommonResults getUserSex(@RequestParam("userId") Integer userId) {
@@ -193,6 +229,7 @@ public class SysUserController {
      * @param modelMap
      * @return
      */
+    @ApiOperation("用户添加页面")
     @GetMapping("/add")
     @PreAuthorize("hasAuthority('sys:user:add')")
     public String addView(ModelMap modelMap) {
@@ -201,6 +238,12 @@ public class SysUserController {
     }
 
 
+    @ApiOperation("用户修改密码")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "username", required = true),
+            @ApiImplicitParam(name = "oldPassword", required = true),
+            @ApiImplicitParam(name = "newPassword", required = true),
+    })
     @ResponseBody
     @PostMapping("/changePassword")
     public CommonResults changePassword(@RequestParam(value = "username") String username,
