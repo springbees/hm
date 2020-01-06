@@ -1,66 +1,66 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<meta http-equiv="Pragma" content="no-cache">
-<meta http-equiv="Cache-Control" content="no-cache">
-<meta http-equiv="Expires" content="0">
-<title>登录</title>
-<header th:replace="common/header::html"></header>
-<link rel="stylesheet" th:href="@{/xadmin/css/login.css}" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Cache-Control" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>登录</title>
+    <header th:replace="common/header::html"></header>
+    <link rel="stylesheet" th:href="@{/xadmin/css/login.css}"/>
 </head>
 <body>
 
-	<div class="login">
-		<div class="message">后台管理系统</div>
-		<div id="darkbannerwrap"></div>
+<div class="login">
+    <div class="message">HM - 权限管理系统</div>
+    <div id="darkbannerwrap"></div>
 
-        <form action="/login" id="login-form" method="post">
-			<input id="username" name="username" placeholder="用户名" type="text" autocomplete="off">
-			<hr class="hr15">
-			<input id="password" name="password" placeholder="密码" type="password" autocomplete="off">
-			<hr class="hr15">
-            <input style="width: 100%;" lay-submit lay-filter="login" type="submit" value="登录">
-			<hr class="hr20">
-			<span id="info" style="color: red"></span>
-		</form>
-	</div>
+    <form action="/login" id="login-form" method="post">
+        <input id="username" name="username" placeholder="用户名" type="text" autocomplete="off">
+        <hr class="hr15">
+        <input id="password" name="password" placeholder="密码" type="password" autocomplete="off">
+        <hr class="hr15">
+        <input style="width: 100%;" lay-submit lay-filter="login" type="submit" value="登录">
+        <hr class="hr20">
+        <span id="info" style="color: red"></span>
+    </form>
+</div>
 </body>
 <script type="text/javascript">
-    $(function  () {
-        layui.use('form', function(){
+    $(function () {
+        layui.use('form', function () {
             var form = layui.form;
             //监听提交
-            form.on('submit(login)', function(data){
+            form.on('submit(login)', function (data) {
                 $.ajax({
-					type : 'post',
-					url : '/login',
-					data : $("#login-form").serialize(),
-					success : function(datas) {
+                    type: 'post',
+                    url: '/login',
+                    data: $("#login-form").serialize(),
+                    success: function (datas) {
 
-						if(datas.authenticated == true){
-							localStorage.setItem("userId", datas.principal.id);
+                        if (datas.authenticated == true) {
+                            localStorage.setItem("userId", datas.principal.id);
                             localStorage.setItem("username", datas.principal.username);
-							localStorage.setItem("nickName", datas.principal.nickname);
-							var authorities = datas.authorities;
-							var permission = [];
-							for(var i in authorities){
-								permission.push(authorities[i].authority);
-							}
-							localStorage.setItem("permission", JSON.stringify(permission));
-							layer.msg("登录成功",{time:500},function(){
-								location.href='/'
-							});
-						}else{
-							layer.msg("登录异常，请联系管理员");
-						}
-					},
-					error : function(xhr, textStatus, errorThrown) {
-						var msg = xhr.responseText;
-						var response = JSON.parse(msg);
-						layer.msg(response.message);
-					}
-				});
+                            localStorage.setItem("nickName", datas.principal.nickname);
+                            var authorities = datas.authorities;
+                            var permission = [];
+                            for (var i in authorities) {
+                                permission.push(authorities[i].authority);
+                            }
+                            localStorage.setItem("permission", JSON.stringify(permission));
+                            layer.msg("登录成功", {time: 500}, function () {
+                                location.href = '/'
+                            });
+                        } else {
+                            layer.msg("登录异常，请联系管理员");
+                        }
+                    },
+                    error: function (xhr, textStatus, errorThrown) {
+                        var msg = xhr.responseText;
+                        var response = JSON.parse(msg);
+                        layer.msg(response.message);
+                    }
+                });
                 return false;
             });
         });
