@@ -2,7 +2,7 @@ package com.jacklinsir.hm.dao;
 
 import com.jacklinsir.hm.model.SysUser;
 import org.apache.ibatis.annotations.*;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.core.parameters.P;
 
 import java.util.List;
 
@@ -40,4 +40,6 @@ public interface SysUserDao {
 
     List<SysUser> findUserByFuzzyUserName(@Param("username") String username);
 
+    @Update("update sys_user t set t.password = #{password} where t.id = #{id}")
+    int changePassword(@Param("id") Integer id, @P("password") String password);
 }

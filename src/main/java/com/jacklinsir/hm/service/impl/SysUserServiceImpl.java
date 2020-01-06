@@ -54,6 +54,21 @@ public class SysUserServiceImpl implements SysUserService {
     }
 
     @Override
+    public int changePassword(String username, String oldPassword, String newPassword) {
+        if (StrUtil.isNotBlank(username) && StrUtil.isNotBlank(oldPassword) && StrUtil.isNotBlank(newPassword)) {
+            SysUser u = userDao.getUser(username);
+            if (ObjectUtil.isNull(u)) {
+                throw new RuntimeException("用户名不存在");
+            }
+            if (new BCryptPasswordEncoder().encode(oldPassword).equals(u.getPassword())) {
+                throw new RuntimeException("旧密码错误");
+            }
+            return userDao.changePassword(u.getId(), new BCryptPasswordEncoder().encode(newPassword));
+        }
+        return 0;
+    }
+
+    @Override
     public int edit(SysUser user, Integer roleId) {
         //校验字段
         filedVerify(user, roleId);

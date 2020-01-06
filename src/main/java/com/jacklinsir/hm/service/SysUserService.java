@@ -1,6 +1,5 @@
 package com.jacklinsir.hm.service;
 
-import com.jacklinsir.hm.dto.UserDto;
 import com.jacklinsir.hm.model.SysUser;
 
 import java.io.IOException;
@@ -32,12 +31,13 @@ public interface SysUserService {
 
     /**
      * 高级查询
+     *
      * @param page
      * @param limit
      * @param username
      * @return
      */
-    List<SysUser> findUserByFuzzyUserName (Integer page, Integer limit,String username);
+    List<SysUser> findUserByFuzzyUserName(Integer page, Integer limit, String username);
 
     /**
      * 根据ID删除用户
@@ -73,4 +73,14 @@ public interface SysUserService {
     SysUser getUserById(Integer id);
 
     int edit(SysUser dto, Integer roleId);
+
+    /**
+     * 修改密码
+     *
+     * @param username
+     * @param oldPassword
+     * @param newPassword
+     * @return
+     */
+    int changePassword(String username, String oldPassword, String newPassword);
 }

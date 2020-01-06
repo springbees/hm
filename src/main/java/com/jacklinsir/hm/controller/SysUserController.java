@@ -135,15 +135,15 @@ public class SysUserController {
     @PostMapping("/findUserByFuzzyUserName")
     public CommonResults findUserByFuzzyUserName(@RequestParam("username") String username,
                                                  @RequestParam(value = "page", defaultValue = "1") Integer page,
-                                                 @RequestParam(value = "limit", defaultValue = "10") Integer limit){
+                                                 @RequestParam(value = "limit", defaultValue = "10") Integer limit) {
         try {
-            List<SysUser> list = userService.findUserByFuzzyUserName(page, limit,username);
+            List<SysUser> list = userService.findUserByFuzzyUserName(page, limit, username);
             //进行统一分页
             CommonPage commonPage = CommonPage.restPage(list);
             return CommonResults.success(commonPage.getTotal().intValue(), commonPage.getList());
-        }catch (Exception e){
-            log.info("高级查询-发生异常: {}",e.fillInStackTrace());
-            return CommonResults.failure(FAIL.getCode(),e.getMessage());
+        } catch (Exception e) {
+            log.info("高级查询-发生异常: {}", e.fillInStackTrace());
+            return CommonResults.failure(FAIL.getCode(), e.getMessage());
         }
     }
 
@@ -198,6 +198,21 @@ public class SysUserController {
     public String addView(ModelMap modelMap) {
         modelMap.addAttribute("sysUser", new SysUser());
         return "admin/admin-add";
+    }
+
+
+    @ResponseBody
+    @PostMapping("/changePassword")
+    public CommonResults changePassword(@RequestParam(value = "username") String username,
+                                        @RequestParam(value = "oldPassword") String oldPassword,
+                                        @RequestParam(value = "newPassword") String newPassword) {
+        try {
+            int changePassword = userService.changePassword(username, oldPassword, newPassword);
+            return changePassword == 1 ? CommonResults.success() : CommonResults.failure();
+        } catch (Exception e) {
+            log.info("修改密码出现异常: {}", e.getMessage());
+            return CommonResults.failure(FAIL.getCode(), e.getMessage());
+        }
     }
 
 }
