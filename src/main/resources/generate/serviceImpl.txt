@@ -1,0 +1,75 @@
+package ${serviceImplPkgName};
+
+import java.util.Map;
+
+import {groupPkgName}.base.result.Results;
+import {groupPkgName}.base.result.ResponseCode;
+import {daoPackageName}.{daoName};
+import {beanPackageName}.{beanName};
+import {servicePkgName}.{serviceName};
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
+
+@Service
+public class  {serviceImplName} implements {serviceName} {
+
+    @Autowired
+    private {daoName} {daoParamName};
+
+    @Override
+    public Results<{beanName}> getByPage(Map<String, Object> params,Integer offset, Integer limit) {
+        return new Results(0,"",null,{daoParamName}.count(params), {daoParamName}.list(params,offset, limit));
+
+    }
+
+    @Override
+    public Results save({beanName} {beanParamName}) {
+        int res = 0;
+        if(StringUtils.isEmpty(sysLogs.getId())){
+            res =  {daoParamName}.save({beanParamName});
+        }else{
+            res =  {daoParamName}.update({beanParamName});
+        }
+        Results results = new Results();
+        results.setCode(ResponseCode.SUCCESS.getCode());
+        results.setMsg(ResponseCode.SUCCESS.getMessage());
+        return results;
+    }
+
+    @Override
+    public Results getById(Integer id) {
+        {beanName} res =  {daoParamName}.getById(id);
+        Results results = new Results();
+        results.setCode(ResponseCode.SUCCESS.getCode());
+        results.setMsg(ResponseCode.SUCCESS.getMessage());
+        return results;
+    }
+
+    @Override
+    public {beanName} get{beanName}ById(Integer id) {
+        return {daoParamName}.getById(id);
+    }
+
+    @Override
+    @Transactional
+    public Results update({beanName} {beanParamName}) {
+        int res =  {daoParamName}.update({beanParamName});
+        Results results = new Results();
+        results.setCode(ResponseCode.SUCCESS.getCode());
+        results.setMsg(ResponseCode.SUCCESS.getMessage());
+        return results;
+    }
+
+    @Override
+    @Transactional
+    public Results delete({beanName} {beanParamName}) {
+        int res =  {daoParamName}.delete({beanParamName});
+        Results results = new Results();
+        results.setCode(ResponseCode.SUCCESS.getCode());
+        results.setMsg(ResponseCode.SUCCESS.getMessage());
+        return results;
+    }
+
+}

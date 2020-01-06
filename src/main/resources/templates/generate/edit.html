@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html class="x-admin-sm" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <header th:replace="common/header::html"></header>
+</head>
+<body>
+<div class="x-body">
+    <form class="layui-form" onsubmit="return false" id="form" style="margin-top: 20px">
+        <div class="layui-form-item">
+            <label for="tableName" class="layui-form-label">
+                <span class="x-red">*</span>表名
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="tableName" value="sys_user" name="tableName" lay-verify="required"
+                       autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label for="tableName" class="layui-form-label">
+            </label>
+            <button id="showInfo" class="layui-btn" lay-filter="showInfo" lay-submit="">
+                预览代码
+            </button>
+            <button id="save" class="layui-btn" lay-filter="save" lay-submit="">
+                保存代码
+            </button>
+        </div>
+
+        <div id="detail">
+            <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+                <legend>基本配置</legend>
+            </fieldset>
+
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">路径</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="path" id="path" value="d:/generate" lay-verify="required"
+                               autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">分组包</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="groupPkgName" id="groupPkgName" value="com.jacklinsir.hm"
+                               lay-verify="required" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">bean包名</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="beanPackageName" id="beanPackageName" value="com.jacklinsir.hm.model"
+                               lay-verify="required" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">bean类名</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="beanName" id="beanName" lay-verify="required" value="BeanTest"
+                               placeholder="bean类名" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">dao包名</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="daoPackageName" value="com.jacklinsir.hm.dao" id="daoPackageName"
+                               lay-verify="required" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">dao类名</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="daoName" id="daoName" value="BeanTestDao" lay-verify="required"
+                               autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">controller包名</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="controllerPkgName" id="controllerPkgName"
+                               value="com.jacklinsir.hm.controller" lay-verify="required" autocomplete="off"
+                               class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">controller类名</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="controllerName" id="controllerName" value="ControllerTest"
+                               lay-verify="required" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">Service包名</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="servicePkgName" id="servicePkgName" value="com.jacklinsir.hm.service"
+                               lay-verify="required" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">Service类名</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="serviceName" id="serviceName" value="ServiceTest" lay-verify="required"
+                               autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">ServiceImpl包名</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="serviceImplPkgName" id="serviceImplPkgName"
+                               value="com.jacklinsir.hm.service.impl" lay-verify="required" autocomplete="off"
+                               class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">ServiceImpl类名</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="serviceImplName" id="serviceImplName" value="ServiceImplTest"
+                               lay-verify="required" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+            </div>
+            <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+                <legend>字段详情</legend>
+            </fieldset>
+            <table class="layui-table">
+                <thead>
+                <tr>
+                    <th lay-data="{field:'id', width:80, sort: true}">表字段名</th>
+                    <th lay-data="{field:'username', width:120, sort: true, edit: 'text'}">表类型</th>
+                    <th lay-data="{field:'email', edit: 'text', minWidth: 150}">字段描述</th>
+                    <th lay-data="{field:'sex', width:80, edit: 'text'}">java字段名</th>
+                    <th lay-data="{field:'city', edit: 'text', minWidth: 100}">java字段类型</th>
+                    <th lay-data="{field:'experience', sort: true, edit: 'text'}">默认值</th>
+                </tr>
+                </thead>
+                <tbody id="beanFields">
+                </tbody>
+            </table>
+        </div>
+    </form>
+</div>
+
+<script type="text/javascript">
+    $("#detail").hide();
+    $("#save").hide();
+    layui.use(['form', 'layer'], function () {
+        $ = layui.jquery;
+        var form = layui.form
+            , layer = layui.layer;
+
+        //监听提交
+        form.on('submit(showInfo)', function (data) {
+            var beanFields = $("#beanFields");
+            beanFields.html("");
+            $.ajax({
+                type: 'get',
+                url: '/generate',
+                data: "tableName=" + $("#tableName").val(),
+                success: function (data) {
+                    $("#detail").show();
+                    $("#save").show();
+
+                    var beanName = data.beanName;
+                    $("#beanName").val(beanName);
+                    $("#daoName").val(beanName + "Dao");
+                    $("#controllerName").val(beanName + "Controller");
+                    $("#serviceName").val(beanName + "Service");
+                    $("#serviceImplName").val(beanName + "ServiceImpl");
+                    var fields = data.fields;
+                    var length = fields.length;
+
+                    for (var i = 0; i < length; i++) {
+                        var f = fields[i];
+                        var tr = $("<tr></tr>");
+
+                        var columnName = f['columnName'];
+                        var columnNameInput = "<input type='hidden' name='columnNames' value='" + columnName + "'>"
+
+                        tr.append("<td>" + columnNameInput + columnName + "</td>");
+                        tr.append("<td>" + f['columnType'] + "</td>");
+                        tr.append("<td>" + f['columnComment'] + "</td>");
+                        var name = f['name'];
+                        var nameInput = "<input name='beanFieldName' class='layui-input' value='" + name + "'>";
+                        tr.append("<td>" + nameInput + "</td>");
+
+                        var type = f['type'];
+                        var typeInput = "<input name='beanFieldType' class='layui-input' value='" + type + "'>"
+                        tr.append("<td>" + typeInput + "</td>");
+
+                        var val = f['columnDefault'];
+                        var valInput = "<input name='beanFieldValue' class='layui-input' value='" + val + "'>"
+                        tr.append("<td>" + valInput + "</td>");
+
+                        beanFields.append(tr);
+                    }
+                }
+            });
+            return false;
+        });
+        //监听提交
+        form.on('submit(save)', function (data) {
+            if ($("#detail").is(':hidden')) {
+                return;
+            }
+            var formdata = $("#form").serializeObject();
+            $.ajax({
+                url: "/generate/save",
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(formdata),
+                dataType: 'json',
+                success: function (data) {
+                    $("#detail").hide();
+                    $("#save").hide();
+                    layer.msg("生成成功");
+                }
+            });
+        });
+    });
+    $.fn.serializeObject = function () {
+        var o = {};
+        var a = this.serializeArray();
+        $.each(a, function () {
+            if (o[this.name]) {
+                if (!o[this.name].push) {
+                    o[this.name] = [o[this.name]];
+                }
+                o[this.name].push(this.value || '');
+            } else {
+                o[this.name] = this.value || '';
+            }
+        });
+        return o;
+    };
+
+
+</script>
+</body>
+</html>

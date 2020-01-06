@@ -1,0 +1,76 @@
+package {controllerPkgName};
+
+import {beanPackageName}.{beanName};
+import io.swagger.annotations.ApiOperation;
+import {groupPkgName}.util.StrUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import {groupPkgName}.base.result.Results;
+import {groupPkgName}.base.result.page.PageTableRequest;
+import {servicePkgName}.{serviceName};
+import org.springframework.web.servlet.ModelAndView;
+import java.util.Map;
+
+@Controller
+@RequestMapping("/{beanParamName}s")
+public class {controllerName} {
+
+    @Autowired
+    private {serviceName} {serviceParamName};
+
+    @RequestMapping(value = "/add", method = RequestMethod.POST)
+    @ApiOperation(value = "保存")
+    @ResponseBody
+    public Results save({beanName} {beanParamName}) {
+      return  {serviceParamName}.save({beanParamName});
+    }
+
+    @GetMapping("/{id}")
+    @ApiOperation(value = "根据id获取")
+    public Results get(@PathVariable Integer id) {
+        return {serviceParamName}.getById(id);
+    }
+
+    @RequestMapping(value = "/edit", method = RequestMethod.POST)
+    @ApiOperation(value = "修改")
+    public Results  update({beanName} {beanParamName}) {
+       return {serviceParamName}.update({beanParamName});
+    }
+
+    @GetMapping("/listPage")
+    @ApiOperation(value = "列表")
+    @ResponseBody
+    public Results<{beanName}> list(PageTableRequest request, {beanName} {beanParamName}) {
+          request.countOffset();
+          Map<String, Object> param = null;
+          try {
+              param =   StrUtil.convertToMap(sysLogs);
+          } catch (Exception e) {
+              e.printStackTrace();
+          }
+        return {serviceParamName}.getByPage(param, request.getOffset(), request.getLimit());
+    }
+
+    @RequestMapping(value = "/delete", method = RequestMethod.GET)
+    @ApiOperation(value = "删除")
+    @ResponseBody
+    public Results delete({beanName} {beanParamName}) {
+        return {serviceParamName}.delete( {beanParamName});
+    }
+
+   @ApiOperation(value = "编辑页面", notes = "跳转到菜单信息编辑页面")//描述
+   @RequestMapping(value = "/addOrEdit", method = RequestMethod.GET)
+    public ModelAndView roleEdit(Model model, HttpServletRequest request, {beanName} {beanParamName}) {
+        {beanName} new{beanName} = new {beanName}();
+        if(0 != {beanParamName}.getId()){
+            new{beanName} = {serviceParamName}.get{beanName}ById({beanParamName}.getId());
+        }
+        model.addAttribute("{beanParamName}",new{beanName});
+        ModelAndView modelAndView =  new ModelAndView("{beanParamName}/add{beanName}");
+        return modelAndView;
+    }
+}

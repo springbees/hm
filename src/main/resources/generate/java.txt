@@ -1,0 +1,9 @@
+package {beanPackageName};
+
+{import}
+
+public class {beanName} extends BaseEntity<Integer> {
+
+{filelds}
+{getset}
+}

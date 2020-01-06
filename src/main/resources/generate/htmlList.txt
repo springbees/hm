@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html class="x-admin-sm" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+  <title>{beanName}列表</title>
+<header th:replace="header::html"></header>
+</head>
+<body>
+<div class="x-nav">
+      <span class="layui-breadcrumb">
+        <a href="">首页</a>
+        <a href="">{beanName}</a>
+        <a>
+          <cite>{beanName}列表</cite></a>
+      </span>
+    <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" href="javascript:location.replace(location.href);" title="刷新">
+        <i class="layui-icon" style="line-height:30px">ဂ</i></a>
+</div>
+
+<div class="x-body">
+    <div class="layui-row">
+        <form class="layui-form layui-col-md12 x-so" id="contentSearchAdd">
+            <input type="text" id="id" name="id"  placeholder="id" autocomplete="off" class="layui-input">
+            <button class="layui-btn"  lay-submit=""   id="searchBtn" lay-filter="search"  data-type="reload" permission="{beanParamName}:query"><i class="layui-icon">&#xe615;</i></button>
+            <a class="layui-btn" onclick="x_admin_show('新增{beanName}','/{beanParamName}s/addOrEdit/?id=0')" permission="{beanParamName}:add"><i class="layui-icon"></i>新增</a>
+        </form>
+    </div>
+
+    <table class="layui-hide" id="table" lay-filter="member"></table>
+
+    <script type="text/html" id="barDemo">
+        <a class="layui-btn layui-btn-xs" lay-event="edit"  permission="{beanParamName}:edit">编辑</a>
+        <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"  permission="{beanParamName}:del">删除</a>
+    </script>
+</div>
+
+</body>
+</html>
+<script type="text/javascript">
+
+ layui.use('table', function(){
+    $ = layui.jquery;
+    var table = layui.table,
+        form=layui.form;
+    table.render({
+        elem: '#table'
+        ,url: '/{beanParamName}s/listPage' //数据接口
+        ,page: true //开启分页
+        ,response: {
+            countName: 'count', //规定数据总数的字段名称，默认：count
+            dataName: 'datas' //规定数据列表的字段名称，默认：data
+        }
+        , cols: [
+             [ //表头
+               {columnsDatas}
+               {fixed: 'right', title: '操作', toolbar: '#barDemo', width: 150}
+            ]
+        ]
+        ,id: 'testReload'
+
+    });
+
+     var $ = layui.$, active = {
+             reload: function(){
+             //执行重载
+             table.reload('testReload', {
+                 page: {
+                     curr: 1 //重新从第 1 页开始
+                 }
+                 ,where: {
+                     key: {
+                         id:  $("#id").val()
+                     }
+                 }
+             });
+         }
+     };
+    //搜索
+     $('#searchBtn').on('click', function(){
+        var type = $(this).data('type');
+        active[type] ? active[type].call(this) : '';
+    });
+
+     //监听工具条
+    table.on('tool(member)', function(obj){
+        var data = obj.data;
+        if(obj.event === 'del'){
+            layer.confirm('真的删除行么', function(index){
+                $.ajax({
+                    url:"/{beanParamName}s/delete",
+                    type:"GET",
+                    data:{id:data.id},
+                    dataType:'json',
+                    success:function(result){
+                        if(result.code == 200){
+                            layer.alert("删除成功", {icon: 1},function (index1) {
+                                layer.close(index1);
+                                x_admin_father_reload();
+                            });
+                        }else{
+                            layer.alert(result.msg);
+                        }
+
+                    },
+                });
+            });
+        } else if(obj.event === 'edit'){
+            var id = data.id;//当前行的id
+            x_admin_show('编辑信息','/{beanParamName}s/addOrEdit/?id='+id);
+        }
+    })
+
+});
+
+</script>

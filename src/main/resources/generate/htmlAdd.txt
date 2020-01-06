@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html class="x-admin-sm" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+ <title>新增信息</title>
+    <header th:replace="header::html"></header>
+</head>
+<body>
+    <div class="x-body">
+         <form class="layui-form">
+             {addDivs}
+            <div class="layui-form-item">
+              <button  class="layui-btn" lay-filter="add" lay-submit="">
+                  保存
+              </button>
+            </div>
+        </form>
+    </div>
+	<script type="text/javascript">
+		layui.use(['form','layer'], function(){
+                $ = layui.jquery;
+                var form = layui.form
+                ,layer = layui.layer
+            //监听提交
+            form.on('submit(add)', function(data){
+                $.ajax({
+                    url:"/{beanParamName}s/add",
+                    type:"POST",
+                    data:data.field,
+                    dataType:'json',
+                    success:function(result){
+                        if(result.code == 500 || result.code == 5000100 || result.code == 5000101 || result.code == 5000102){
+                            layer.alert(result.msg);
+                        }else{
+                            layer.alert("设置成功", {icon: 6},function () {
+                                x_admin_close();
+                                x_admin_father_reload();
+                            });
+                        }
+                    }
+                });
+                return false;
+             });
+          });
+	</script>
+</body>
+</html>
