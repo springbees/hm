@@ -14,24 +14,24 @@
 
 后台登入页面：
 
-![](./doc/img/login.png)
+![后台登入页面](./doc/img/login.png)
 
 后台首页:
-![](./doc/img/index.png)
+![后台首页](./doc/img/index.png)
 
 **列举功能1**
 
 菜单管理:
 
-![](./doc/img/permission.png)
+![菜单管理](./doc/img/permission.png)
 
 接口Swagger API文档
 
-![](./doc/img/API.png)
+![接口Swagger API文档](./doc/img/API.png)
 
 在线代码生成功能:
 
-![](./doc/img/代码生成.png)
+![在线代码生成功能](./doc/img/代码生成.png)
 
 ### 技术选型
 待补上...
