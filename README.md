@@ -129,7 +129,6 @@ mybatis:
 完毕！
 
 ### 许可证
-
 Apache License 2.0
 
-Copyright (c)  2019-2020  jacklinSir
+Copyright (c) 2019-2020 jacklinSir
