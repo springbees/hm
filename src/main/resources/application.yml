@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: dev #指定配置文件
+    active: prod #指定配置文件
   devtools:
     restart:
       #需要实时更新的目录
