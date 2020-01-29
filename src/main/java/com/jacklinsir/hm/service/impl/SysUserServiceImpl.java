@@ -60,7 +60,9 @@ public class SysUserServiceImpl implements SysUserService {
             if (ObjectUtil.isNull(u)) {
                 throw new RuntimeException("用户名不存在");
             }
-            if (!new BCryptPasswordEncoder().encode(oldPassword).equals(u.getPassword())) {
+            BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+            //使用未经过加密的方法和已经加密过的方法进行比较
+            if (!bCryptPasswordEncoder.matches(oldPassword, u.getPassword())) {
                 throw new RuntimeException("旧密码错误");
             }
             return userDao.changePassword(u.getId(), new BCryptPasswordEncoder().encode(newPassword));
